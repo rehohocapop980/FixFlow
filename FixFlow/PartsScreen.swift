@@ -9,7 +9,7 @@ struct PartsScreen: View {
     @State private var partToEdit: Part?
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ZStack {
                 FixFlowTheme.Colors.purpleBackground
                     .ignoresSafeArea()
@@ -34,9 +34,7 @@ struct PartsScreen: View {
                 PartDetailsScreen(part: part, viewModel: viewModel)
             }
             .sheet(isPresented: $showingQuantityEditor) {
-                if let part = partToEdit {
-                    QuantityEditorSheet(part: part, viewModel: viewModel)
-                }
+                quantityEditorSheetView
             }
         }
     }
@@ -175,32 +173,33 @@ struct PartsScreen: View {
                                 selectedPart = part
                             }
                         }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(role: .destructive) {
-                                withAnimation(FixFlowTheme.Animation.spring) {
-                                    viewModel.deletePart(part)
-                                }
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                            
-                            Button {
-                                partToEdit = part
-                                showingQuantityEditor = true
-                            } label: {
-                                Label("Quantity", systemImage: "slider.horizontal.3")
-                            }
-                            .tint(FixFlowTheme.Colors.orange)
-                        }
-                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                            Button {
+                        .contextMenu {
+                            Button(action: {
                                 withAnimation(FixFlowTheme.Animation.spring) {
                                     selectedPart = part
                                 }
-                            } label: {
+                            }) {
                                 Label("Edit", systemImage: "pencil")
                             }
-                            .tint(FixFlowTheme.Colors.accent)
+                            
+                            Button(action: {
+                                partToEdit = part
+                                showingQuantityEditor = true
+                            }) {
+                                Label("Quantity", systemImage: "slider.horizontal.3")
+                            }
+                            
+                            Button(action: {
+                                withAnimation(FixFlowTheme.Animation.spring) {
+                                    viewModel.deletePart(part)
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "trash")
+                                    Text("Delete")
+                                }
+                                .foregroundColor(.red)
+                            }
                         }
                         .fixFlowCardTransition()
                 }
@@ -208,7 +207,7 @@ struct PartsScreen: View {
             .padding(.horizontal, FixFlowTheme.Spacing.lg)
             .padding(.bottom, 100)
         }
-        .scrollContentBackground(.hidden)
+        .background(Color.clear)
         .overlay(
             VStack {
                 Spacer()
@@ -227,6 +226,15 @@ struct PartsScreen: View {
                 }
             }
         )
+    }
+    
+    @ViewBuilder
+    private var quantityEditorSheetView: some View {
+        if let part = partToEdit {
+            QuantityEditorSheet(part: part, viewModel: viewModel)
+        } else {
+            EmptyView()
+        }
     }
 }
 
@@ -256,8 +264,7 @@ struct StatisticCard: View {
                 .foregroundColor(color)
             
             Text(value)
-                .font(FixFlowTheme.Typography.headline)
-                .fontWeight(.bold)
+                .font(.system(size: 17, weight: .bold))
                 .foregroundColor(.white)
             
             Text(title)
@@ -335,8 +342,7 @@ struct PartCardView: View {
                         .foregroundColor(FixFlowTheme.Colors.textSecondary)
                     
                     Text("\(part.quantity) pcs.")
-                        .font(FixFlowTheme.Typography.callout)
-                        .fontWeight(.medium)
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                 }
                 
@@ -348,8 +354,7 @@ struct PartCardView: View {
                         .foregroundColor(FixFlowTheme.Colors.textSecondary)
                     
                     Text("\(Int(part.price))")
-                        .font(FixFlowTheme.Typography.callout)
-                        .fontWeight(.medium)
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.white)
                 }
             }
@@ -405,8 +410,7 @@ struct AvailabilityBadge: View {
                 .font(.system(size: 10, weight: .semibold))
             
             Text(status.text)
-                .font(FixFlowTheme.Typography.caption)
-                .fontWeight(.semibold)
+                .font(.system(size: 12, weight: .semibold))
         }
         .foregroundColor(.white)
         .padding(.horizontal, FixFlowTheme.Spacing.sm)

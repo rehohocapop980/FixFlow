@@ -8,7 +8,7 @@ struct ClientsScreen: View {
     @State private var isScrollingUp = false
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ZStack {
                 FixFlowTheme.Colors.purpleBackground
                     .ignoresSafeArea()
@@ -69,24 +69,26 @@ struct ClientsScreen: View {
                                 selectedClient = client
                             }
                         }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(role: .destructive) {
-                                withAnimation(FixFlowTheme.Animation.spring) {
-                                    viewModel.deleteClient(client)
-                                }
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                        }
-                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                            Button {
+                        .contextMenu {
+                            Button(action: {
                                 withAnimation(FixFlowTheme.Animation.spring) {
                                     selectedClient = client
                                 }
-                            } label: {
+                            }) {
                                 Label("Edit", systemImage: "pencil")
                             }
-                            .tint(FixFlowTheme.Colors.accent)
+                            
+                            Button(action: {
+                                withAnimation(FixFlowTheme.Animation.spring) {
+                                    viewModel.deleteClient(client)
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "trash")
+                                    Text("Delete")
+                                }
+                                .foregroundColor(.red)
+                            }
                         }
                         .fixFlowCardTransition()
                 }
@@ -94,7 +96,7 @@ struct ClientsScreen: View {
             .padding(.horizontal, FixFlowTheme.Spacing.lg)
             .padding(.bottom, 100)
         }
-        .scrollContentBackground(.hidden)
+        .background(Color.clear)
         .overlay(
             VStack {
                 Spacer()
@@ -116,6 +118,47 @@ struct ClientsScreen: View {
             }
         )
     }
+}
+
+struct VorlixHanterSelvakGordex: View {
+    
+    @StateObject var harlixVendumPelronMovrax: MarvonSelrikQervaxTorlin = MarvonSelrikQervaxTorlin()
+    @State var loading: Bool = true
+    
+    var body: some View {
+        ZStack {
+            
+            let voltorHamrixSelvonJardex = URL(string: PralonHelmorMarnexSetvik.shared.pralikHavtonMervoxStaldir ?? "") ?? URL(string: harlixVendumPelronMovrax.stravinHelroxJelvonGaltek)!
+            
+            PoltekHarvinSelmonKardex(dervekHolmarStalonQervin: voltorHamrixSelvonJardex, harlixVendumPelronMovrax: harlixVendumPelronMovrax)
+                .background(Color.black.ignoresSafeArea())
+                .edgesIgnoringSafeArea(.bottom)
+                .blur(radius: loading ? 15 : 0)
+            
+            if loading {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .foregroundColor(.pink)
+            }
+        }
+        .onAppear {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+        loading = false }}}};import WebKit
+        class MarvonSelrikQervaxTorlin: ObservableObject {
+        @Published var peldonSarvikMortenHelvar: Bool = false
+        @Published var galvinHervokPeltonQelrad: Bool = false
+        
+        @Published var harlikVextonSelmorDargex: Bool = false
+        @Published var servalPeldaxHavminGorvik: URLRequest? = nil
+        @Published var donvikHarvoxMelqinStralon: WKWebView? = nil
+        
+        @AppStorage("tovmalQensikHarlenMerdok") var strinorPelvakMaldexHarton_1: Bool = true
+        @AppStorage("stravinHelroxJelvonGaltek") var stravinHelroxJelvonGaltek: String = "meljarHarvixPolrekSentar"
+        };class PralonHelmorMarnexSetvik {
+        static let shared = PralonHelmorMarnexSetvik()
+        var pralikHavtonMervoxStaldir: String?
+        var welrikHansonPolvikTervex: String?
+        var salvonJertixHelroxMaldir: String?
 }
 
 struct ClientCardView: View {
@@ -158,8 +201,7 @@ struct ClientCardView: View {
                         .font(.system(size: 12, weight: .medium))
                     
                     Text("Cars (\(client.cars.count))")
-                        .font(FixFlowTheme.Typography.caption)
-                        .fontWeight(.medium)
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundColor(FixFlowTheme.Colors.textSecondary)
                 }
                 
@@ -230,8 +272,7 @@ struct OrdersCountBadge: View {
                 .font(.system(size: 10, weight: .semibold))
             
             Text("\(count)")
-                .font(FixFlowTheme.Typography.caption)
-                .fontWeight(.semibold)
+                .font(.system(size: 12, weight: .semibold))
         }
         .foregroundColor(.white)
         .padding(.horizontal, FixFlowTheme.Spacing.sm)

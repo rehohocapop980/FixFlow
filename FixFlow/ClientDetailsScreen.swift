@@ -4,7 +4,7 @@ import SwiftUI
 struct ClientDetailsScreen: View {
     @State var client: Client
     @ObservedObject var viewModel: ClientsViewModel
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     
     @State private var isEditing = false
     @State private var editedClient: Client
@@ -16,7 +16,7 @@ struct ClientDetailsScreen: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
                     mainInfoCard
@@ -33,17 +33,17 @@ struct ClientDetailsScreen: View {
                 }
                 .padding()
             }
-            .navigationTitle("Детали клиента")
+            .navigationTitle("Client Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Закрыть") {
-                        dismiss()
+                    Button("Close") {
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(isEditing ? "Сохранить" : "Изменить") {
+                    Button(isEditing ? "Save" : "Edit") {
                         if isEditing {
                             saveChanges()
                         } else {
@@ -63,17 +63,16 @@ struct ClientDetailsScreen: View {
                     .font(.title2)
                 
                 VStack(alignment: .leading) {
-                    Text("Клиент")
+                    Text("Client")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
                     if isEditing {
-                        TextField("Имя клиента", text: $editedClient.name)
+                        TextField("Client Name", text: $editedClient.name)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                     } else {
                         Text(client.name)
-                            .font(.headline)
-                            .fontWeight(.semibold)
+                            .font(.system(size: 17, weight: .semibold))
                     }
                 }
                 
@@ -82,7 +81,7 @@ struct ClientDetailsScreen: View {
                 OrdersCountBadge(count: viewModel.getOrdersCount(for: client))
             }
             
-            Text("Клиент с \(client.createdAt, formatter: dateFormatter)")
+            Text("Client since \(client.createdAt, formatter: dateFormatter)")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
@@ -99,9 +98,8 @@ struct ClientDetailsScreen: View {
                     .foregroundColor(.green)
                     .font(.title2)
                 
-                Text("Автомобили (\(client.cars.count))")
-                    .font(.headline)
-                    .fontWeight(.semibold)
+                Text("Cars (\(client.cars.count))")
+                    .font(.system(size: 17, weight: .semibold))
                 
                 Spacer()
             }
@@ -110,15 +108,14 @@ struct ClientDetailsScreen: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text(car.fullName)
-                            .font(.subheadline)
-                            .fontWeight(.medium)
+                            .font(.system(size: 15, weight: .medium))
                         
                         Spacer()
                     }
                     
                     HStack {
                         if let licensePlate = car.licensePlate {
-                            Text("Госномер: \(licensePlate)")
+                            Text("License Plate: \(licensePlate)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -148,9 +145,9 @@ struct ClientDetailsScreen: View {
                     .foregroundColor(.orange)
                     .font(.title2)
                 
-                Text("Контакты")
+                Text("Contacts")
                     .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold))
                 
                 Spacer()
             }
@@ -162,7 +159,7 @@ struct ClientDetailsScreen: View {
                         .font(.caption)
                     
                     if isEditing {
-                        TextField("Телефон", text: $editedClient.phone)
+                        TextField("Phone", text: $editedClient.phone)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .keyboardType(.phonePad)
                     } else {
@@ -206,20 +203,19 @@ struct ClientDetailsScreen: View {
                     .foregroundColor(.purple)
                     .font(.title2)
                 
-                Text("Заметки")
+                Text("Notes")
                     .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold))
                 
                 Spacer()
             }
             
             if isEditing {
-                TextField("Заметки", text: Binding(
+                TextEditor(text: Binding(
                     get: { editedClient.notes ?? "" },
                     set: { editedClient.notes = $0.isEmpty ? nil : $0 }
-                ), axis: .vertical)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .lineLimit(3...6)
+                ))
+                .frame(minHeight: 80, maxHeight: 120)
             } else {
                 Text(client.notes ?? "")
                     .font(.body)
@@ -239,16 +235,16 @@ struct ClientDetailsScreen: View {
                     .foregroundColor(.blue)
                     .font(.title2)
                 
-                Text("История заказов")
+                Text("Order History")
                     .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold))
                 
                 Spacer()
             }
             
             VStack(spacing: 12) {
                 HStack {
-                    Text("Всего заказов:")
+                    Text("Total Orders:")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -256,10 +252,10 @@ struct ClientDetailsScreen: View {
                     
                     Text("\(viewModel.getOrdersCount(for: client))")
                         .font(.subheadline)
-                        .fontWeight(.semibold)
+                        .font(.system(size: 17, weight: .semibold))
                 }
                 
-                Text("Последние заказы будут отображаться здесь")
+                Text("Recent orders will be displayed here")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .italic()

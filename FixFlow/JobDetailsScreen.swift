@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct JobDetailsScreen: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     @State private var showingEditScreen = false
     @State private var showingCompleteAlert = false
     
@@ -10,7 +10,7 @@ struct JobDetailsScreen: View {
     let onComplete: (Job) -> Void
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
                     VStack(alignment: .leading, spacing: 16) {
@@ -20,7 +20,7 @@ struct JobDetailsScreen: View {
                                 .font(.title2)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Клиент")
+                                Text("Client")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 Text(job.clientName)
@@ -39,7 +39,7 @@ struct JobDetailsScreen: View {
                                 .font(.title2)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Автомобиль")
+                                Text("Car")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 Text(job.carModel)
@@ -58,7 +58,7 @@ struct JobDetailsScreen: View {
                                 .font(.title2)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Услуга")
+                                Text("Service")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 Text(job.service)
@@ -81,7 +81,7 @@ struct JobDetailsScreen: View {
                                 .font(.title2)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Статус")
+                                Text("Status")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 Text(job.status.rawValue)
@@ -102,10 +102,10 @@ struct JobDetailsScreen: View {
                                 .font(.title2)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Срок выполнения")
+                                Text("Deadline")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
-                                Text(job.dueDate.formatted(date: .abbreviated, time: .omitted))
+                                Text(formatDate(job.dueDate))
                                     .font(.headline)
                                     .foregroundColor(.primary)
                             }
@@ -121,10 +121,10 @@ struct JobDetailsScreen: View {
                                 .font(.title2)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Создан")
+                                Text("Created")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
-                                Text(job.createdAt.formatted(date: .abbreviated, time: .shortened))
+                                Text(formatDateWithTime(job.createdAt))
                                     .font(.headline)
                                     .foregroundColor(.primary)
                             }
@@ -142,7 +142,7 @@ struct JobDetailsScreen: View {
                             Button(action: { showingCompleteAlert = true }) {
                                 HStack {
                                     Image(systemName: "checkmark.circle.fill")
-                                    Text("Отметить как завершённый")
+                                    Text("Mark as complete")
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -155,7 +155,7 @@ struct JobDetailsScreen: View {
                         Button(action: { showingEditScreen = true }) {
                             HStack {
                                 Image(systemName: "pencil.circle.fill")
-                                Text("Редактировать заказ")
+                                Text("Edit order")
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -168,11 +168,11 @@ struct JobDetailsScreen: View {
                 }
                 .padding()
             }
-            .navigationTitle("Детали заказа")
+            .navigationTitle("Order details")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Редактировать") {
+                    Button("Edit") {
                         showingEditScreen = true
                     }
                 }
@@ -182,13 +182,15 @@ struct JobDetailsScreen: View {
                     onUpdate(updatedJob)
                 }
             }
-            .alert("Завершить заказ", isPresented: $showingCompleteAlert) {
-                Button("Отмена", role: .cancel) { }
-                Button("Завершить", role: .destructive) {
-                    completeJob()
-                }
-            } message: {
-                Text("Вы уверены, что хотите отметить этот заказ как завершённый?")
+            .alert(isPresented: $showingCompleteAlert) {
+                Alert(
+                    title: Text("Complete order"),
+                    message: Text("Are you sure you want to mark this order as complete??"),
+                    primaryButton: .cancel(Text("Cancel")),
+                    secondaryButton: .default(Text("Complete")) {
+                        completeJob()
+                    }
+                )
             }
         }
     }
@@ -238,17 +240,31 @@ struct JobDetailsScreen: View {
         
         onComplete(completedJob)
     }
+    
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter.string(from: date)
+    }
+    
+    private func formatDateWithTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
 }
 
 #Preview {
     JobDetailsScreen(
         job: Job(
-            clientName: "Иван Петров",
+            clientName: "John Smith",
             carModel: "Toyota Camry 2020",
-            service: "Замена масла",
+            service: "Oil Change",
             status: .pending,
             dueDate: Date(),
-            description: "Полная замена моторного масла и фильтра"
+            description: "Full engine oil and filter replacement"
         ),
         onUpdate: { _ in },
         onComplete: { _ in }

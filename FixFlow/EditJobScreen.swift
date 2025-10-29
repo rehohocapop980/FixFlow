@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EditJobScreen: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     @State private var clientName: String
     @State private var carModel: String
     @State private var service: String
@@ -24,60 +24,57 @@ struct EditJobScreen: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Section("Информация о заказе") {
-                    TextField("Имя клиента", text: $clientName)
+                Section(header: Text("Order Information")) {
+                    TextField("Client Name", text: $clientName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     
-                    TextField("Модель авто", text: $carModel)
+                    TextField("Car Model", text: $carModel)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     
-                    TextField("Услуга", text: $service)
+                    TextField("Service", text: $service)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 
-                Section("Статус и сроки") {
-                    Picker("Статус", selection: $status) {
+                Section(header: Text("Status and Deadlines")) {
+                    Picker("Status", selection: $status) {
                         ForEach(JobStatus.allCases, id: \.self) { status in
                             Text(status.rawValue).tag(status)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
                     
-                    DatePicker("Срок выполнения", selection: $dueDate, displayedComponents: .date)
+                    DatePicker("Deadline", selection: $dueDate, displayedComponents: .date)
                 }
                 
-                Section("Информация о создании") {
+                Section(header: Text("Creation Information")) {
                     HStack {
-                        Text("Создан")
+                        Text("Created")
                         Spacer()
-                        Text(job.createdAt.formatted(date: .abbreviated, time: .shortened))
+                        Text(formatDateWithTime(job.createdAt))
                             .foregroundColor(.secondary)
                     }
                 }
             }
-            .navigationTitle("Редактировать заказ")
+            .navigationTitle("Edit Order")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Отмена") {
-                        dismiss()
-                    }
+            .navigationBarItems(
+                leading: Button("Cancel") {
+                    presentationMode.wrappedValue.dismiss()
+                },
+                trailing: Button("Save") {
+                    saveJob()
                 }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Сохранить") {
-                        saveJob()
-                    }
-                    .fontWeight(.semibold)
-                    .disabled(clientName.isEmpty || service.isEmpty)
-                }
-            }
-            .alert("Ошибка валидации", isPresented: $showingValidationAlert) {
-                Button("OK") { }
-            } message: {
-                Text(validationMessage)
+                .font(.system(size: 17, weight: .semibold))
+                .disabled(clientName.isEmpty || service.isEmpty)
+            )
+            .alert(isPresented: $showingValidationAlert) {
+                Alert(
+                    title: Text("Validation Error"),
+                    message: Text(validationMessage),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
     }
@@ -87,7 +84,7 @@ struct EditJobScreen: View {
         
         let updatedJob = Job(
             clientName: clientName,
-            carModel: carModel.isEmpty ? "Не указано" : carModel,
+            carModel: carModel.isEmpty ? "Not specified" : carModel,
             service: service,
             status: status,
             dueDate: dueDate,
@@ -95,33 +92,40 @@ struct EditJobScreen: View {
         )
         
         onSave(updatedJob)
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
     
     private func validateFields() -> Bool {
         if clientName.isEmpty {
-            validationMessage = "Имя клиента обязательно для заполнения"
+            validationMessage = "Client name is required"
             showingValidationAlert = true
             return false
         }
         
         if service.isEmpty {
-            validationMessage = "Услуга обязательна для заполнения"
+            validationMessage = "Service is required"
             showingValidationAlert = true
             return false
         }
         
         return true
     }
+    
+    private func formatDateWithTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
 }
 
 #Preview {
     EditJobScreen(job: Job(
-        clientName: "Иван Петров",
+        clientName: "John Smith",
         carModel: "Toyota Camry 2020",
-        service: "Замена масла",
+        service: "Oil Change",
         status: .pending,
         dueDate: Date(),
-        description: "Полная замена моторного масла и фильтра"
+        description: "Full engine oil and filter replacement"
     )) { _ in }
 }

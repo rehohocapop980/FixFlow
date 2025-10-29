@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EditPartScreen: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     @State private var name: String
     @State private var quantity: Int
     @State private var price: String
@@ -22,45 +22,45 @@ struct EditPartScreen: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Section("Информация о детали") {
-                    TextField("Название детали", text: $name)
+                Section(header: Text("Part Information")) {
+                    TextField("Part Name", text: $name)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     
-                    TextField("Поставщик", text: $supplier)
+                    TextField("Supplier", text: $supplier)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 
-                Section("Количество и цена") {
+                Section(header: Text("Quantity and Price")) {
                     HStack {
-                        Text("Количество")
+                        Text("Quantity")
                         Spacer()
                         Stepper(value: $quantity, in: 1...1000) {
                             Text("\(quantity)")
-                                .fontWeight(.semibold)
+                                .font(.system(size: 17, weight: .semibold))
                         }
                     }
                     
-                    TextField("Цена за единицу", text: $price)
+                    TextField("Price per Unit", text: $price)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .keyboardType(.decimalPad)
                     
                     HStack {
-                        Text("Общая стоимость")
+                        Text("Total Cost")
                             .foregroundColor(.secondary)
                         Spacer()
                         Text("\(totalCost, specifier: "%.2f")")
-                            .fontWeight(.semibold)
+                            .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.primary)
                     }
                 }
                 
-                Section("Информация о создании") {
+                Section(header: Text("Creation Information")) {
                     HStack {
-                        Text("Создан")
+                        Text("Created")
                         Spacer()
-                        Text(part.createdAt.formatted(date: .abbreviated, time: .shortened))
+                        Text(formatDateWithTime(part.createdAt))
                             .foregroundColor(.secondary)
                     }
                 }
@@ -69,7 +69,7 @@ struct EditPartScreen: View {
                     Button(action: savePart) {
                         HStack {
                             Image(systemName: "pencil.circle.fill")
-                            Text("Сохранить изменения")
+                            Text("Save Changes")
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -82,19 +82,21 @@ struct EditPartScreen: View {
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
             }
-            .navigationTitle("Редактировать деталь")
+            .navigationTitle("Edit Part")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Отмена") {
-                        dismiss()
+                    Button("Cancel") {
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
-            .alert("Ошибка валидации", isPresented: $showingValidationAlert) {
-                Button("OK") { }
-            } message: {
-                Text(validationMessage)
+            .alert(isPresented: $showingValidationAlert) {
+                Alert(
+                    title: Text("Validation Error"),
+                    message: Text(validationMessage),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
     }
@@ -116,31 +118,38 @@ struct EditPartScreen: View {
             partNumber: part.partNumber,
             quantity: quantity,
             price: Double(price) ?? 0,
-            supplier: supplier.isEmpty ? "Не указан" : supplier,
+            supplier: supplier.isEmpty ? "Not specified" : supplier,
             category: part.category,
             description: part.description,
             minimumQuantity: part.minimumQuantity
         )
         
         onSave(updatedPart)
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
+    }
+    
+    private func formatDateWithTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
     
     private func validateFields() -> Bool {
         if name.isEmpty {
-            validationMessage = "Название детали обязательно для заполнения"
+            validationMessage = "Part name is required"
             showingValidationAlert = true
             return false
         }
         
         if price.isEmpty {
-            validationMessage = "Цена обязательна для заполнения"
+            validationMessage = "Price is required"
             showingValidationAlert = true
             return false
         }
         
         guard let priceValue = Double(price), priceValue > 0 else {
-            validationMessage = "Цена должна быть положительным числом"
+            validationMessage = "Price must be a positive number"
             showingValidationAlert = true
             return false
         }
@@ -151,13 +160,13 @@ struct EditPartScreen: View {
 
 #Preview {
     EditPartScreen(part: Part(
-        name: "Масляный фильтр",
-        partNumber: "OF-001",
+        name: "",
+        partNumber: "",
         quantity: 15,
         price: 850.0,
-        supplier: "Манн-Фильтр",
+        supplier: "",
         category: .filters,
-        description: "Оригинальный масляный фильтр для большинства автомобилей",
+        description: "",
         minimumQuantity: 10
     )) { _ in }
 }

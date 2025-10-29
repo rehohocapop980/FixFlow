@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AddClientScreen: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     @State private var name = ""
     @State private var phone = ""
     @State private var car = ""
@@ -11,9 +11,9 @@ struct AddClientScreen: View {
     let onSave: (Client) -> Void
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Section("Basic Information") {
+                Section(header: Text("Basic Information")) {
                     TextField("Client Name", text: $name)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     
@@ -22,7 +22,7 @@ struct AddClientScreen: View {
                         .keyboardType(.phonePad)
                 }
                 
-                Section("Car") {
+                Section(header: Text("Car")) {
                     TextField("Car Model", text: $car)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     
@@ -53,14 +53,16 @@ struct AddClientScreen: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
-            .alert("Validation Error", isPresented: $showingValidationAlert) {
-                Button("OK") { }
-            } message: {
-                Text(validationMessage)
+            .alert(isPresented: $showingValidationAlert) {
+                Alert(
+                    title: Text("Validation Error"),
+                    message: Text(validationMessage),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
     }
@@ -77,7 +79,7 @@ struct AddClientScreen: View {
         )
         
         onSave(newClient)
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
     
     private func validateFields() -> Bool {

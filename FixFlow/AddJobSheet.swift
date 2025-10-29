@@ -3,7 +3,7 @@ import SwiftUI
 
 struct AddJobSheet: View {
     @ObservedObject var viewModel: JobsViewModel
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     
     @State private var clientName = ""
     @State private var carModel = ""
@@ -13,14 +13,14 @@ struct AddJobSheet: View {
     @State private var selectedStatus: JobStatus = .pending
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Section("Client Information") {
+                Section(header: Text("Client Information")) {
                     TextField("Client Name", text: $clientName)
                     TextField("Car Model", text: $carModel)
                 }
                 
-                Section("Job Details") {
+                Section(header: Text("Job Details")) {
                     TextField("Service", text: $service)
                     
                     Picker("Status", selection: $selectedStatus) {
@@ -32,27 +32,22 @@ struct AddJobSheet: View {
                     DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
                 }
                 
-                Section("Description") {
-                    TextField("Additional information", text: $description, axis: .vertical)
-                        .lineLimit(3...6)
+                Section(header: Text("Description")) {
+                    TextEditor(text: $description)
+                        .frame(minHeight: 80, maxHeight: 120)
                 }
             }
             .navigationTitle("New Order")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+            .navigationBarItems(
+                leading: Button("Cancel") {
+                    presentationMode.wrappedValue.dismiss()
+                },
+                trailing: Button("Save") {
+                    saveJob()
                 }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        saveJob()
-                    }
-                    .disabled(!isFormValid)
-                }
-            }
+                .disabled(!isFormValid)
+            )
         }
     }
     
@@ -71,7 +66,7 @@ struct AddJobSheet: View {
         )
         
         viewModel.addJob(newJob)
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
 }
 

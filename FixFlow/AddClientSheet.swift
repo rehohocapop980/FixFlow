@@ -3,7 +3,7 @@ import SwiftUI
 
 struct AddClientSheet: View {
     @ObservedObject var viewModel: ClientsViewModel
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     
     @State private var name = ""
     @State private var phone = ""
@@ -13,9 +13,9 @@ struct AddClientSheet: View {
     @State private var showingAddCar = false
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Section("Basic Information") {
+                Section(header: Text("Basic Information")) {
                     TextField("Client Name", text: $name)
                     TextField("Phone", text: $phone)
                         .keyboardType(.phonePad)
@@ -24,13 +24,12 @@ struct AddClientSheet: View {
                         .autocapitalization(.none)
                 }
                 
-                Section("Cars") {
+                Section(header: Text("Cars")) {
                     ForEach(cars) { car in
                         HStack {
                             VStack(alignment: .leading) {
                                 Text(car.fullName)
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
+                                    .font(.system(size: 15, weight: .medium))
                                 
                                 if let licensePlate = car.licensePlate {
                                     Text(licensePlate)
@@ -55,9 +54,9 @@ struct AddClientSheet: View {
                     .foregroundColor(.blue)
                 }
                 
-                Section("Notes") {
-                    TextField("Additional information", text: $notes, axis: .vertical)
-                        .lineLimit(3...6)
+                Section(header: Text("Notes")) {
+                    TextEditor(text: $notes)
+                        .frame(minHeight: 80, maxHeight: 120)
                 }
             }
             .navigationTitle("New Client")
@@ -65,7 +64,7 @@ struct AddClientSheet: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
                 
@@ -96,13 +95,13 @@ struct AddClientSheet: View {
         )
         
         viewModel.addClient(newClient)
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
 }
 
 struct AddCarSheet: View {
     @Binding var cars: [Car]
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     
     @State private var make = ""
     @State private var model = ""
@@ -111,9 +110,9 @@ struct AddCarSheet: View {
     @State private var vin = ""
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Section("Car Information") {
+                Section(header: Text("Car Information")) {
                     TextField("Make", text: $make)
                     TextField("Model", text: $model)
                     
@@ -135,7 +134,7 @@ struct AddCarSheet: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
                 
@@ -163,7 +162,7 @@ struct AddCarSheet: View {
         )
         
         cars.append(newCar)
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
 }
 

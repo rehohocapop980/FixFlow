@@ -3,21 +3,21 @@ import SwiftUI
 
 struct AddPartSheet: View {
     @ObservedObject var viewModel: PartsViewModel
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     
     @State private var name = ""
     @State private var partNumber = ""
     @State private var quantity = 0
-    @State private var price = 0.0
+    @State private var priceText = ""
     @State private var supplier = ""
     @State private var selectedCategory: PartCategory = .other
     @State private var description = ""
     @State private var minimumQuantity = 5
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Section("Basic Information") {
+                Section(header: Text("Basic Information")) {
                     TextField("Part Name", text: $name)
                     TextField("Part Number", text: $partNumber)
                         .autocapitalization(.allCharacters)
@@ -32,27 +32,33 @@ struct AddPartSheet: View {
                     }
                 }
                 
-                Section("Quantity and Price") {
+                Section(header: Text("Quantity and Price")) {
                     Stepper("Quantity: \(quantity)", value: $quantity, in: 0...1000)
                     
                     HStack {
                         Text("Price")
                         Spacer()
-                        TextField("0", value: $price, format: .number)
+                        TextField("0", text: $priceText)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
+                            .onChange(of: priceText) { newValue in
+                                let filtered = newValue.filter { $0.isNumber || $0 == "." }
+                                if filtered != newValue {
+                                    priceText = filtered
+                                }
+                            }
                     }
                     
                     Stepper("Minimum: \(minimumQuantity)", value: $minimumQuantity, in: 1...100)
                 }
                 
-                Section("Supplier") {
+                Section(header: Text("Supplier")) {
                     TextField("Supplier Name", text: $supplier)
                 }
                 
-                Section("Description") {
-                    TextField("Additional information", text: $description, axis: .vertical)
-                        .lineLimit(3...6)
+                Section(header: Text("Description")) {
+                    TextEditor(text: $description)
+                        .frame(minHeight: 80, maxHeight: 120)
                 }
             }
             .navigationTitle("New Part")
@@ -60,7 +66,7 @@ struct AddPartSheet: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
                 
@@ -75,10 +81,11 @@ struct AddPartSheet: View {
     }
     
     private var isFormValid: Bool {
-        !name.isEmpty && !partNumber.isEmpty && !supplier.isEmpty && price > 0
+        !name.isEmpty && !partNumber.isEmpty && !supplier.isEmpty && (Double(priceText) ?? 0) > 0
     }
     
     private func savePart() {
+        let price = Double(priceText) ?? 0.0
         let newPart = Part(
             name: name,
             partNumber: partNumber,
@@ -91,7 +98,7 @@ struct AddPartSheet: View {
         )
         
         viewModel.addPart(newPart)
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
 }
 

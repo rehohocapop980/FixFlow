@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AddJobScreen: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     @State private var clientName = ""
     @State private var carModel = ""
     @State private var service = ""
@@ -13,51 +13,53 @@ struct AddJobScreen: View {
     let onSave: (Job) -> Void
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Section("Информация о заказе") {
-                    TextField("Имя клиента", text: $clientName)
+                Section(header: Text("Order information")) {
+                    TextField("Customer name", text: $clientName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     
-                    TextField("Модель авто", text: $carModel)
+                    TextField("Car model", text: $carModel)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     
-                    TextField("Услуга", text: $service)
+                    TextField("Service", text: $service)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 
-                Section("Статус и сроки") {
-                    Picker("Статус", selection: $status) {
+                Section(header: Text("Status and deadlines")) {
+                    Picker("Status", selection: $status) {
                         ForEach(JobStatus.allCases, id: \.self) { status in
                             Text(status.rawValue).tag(status)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
                     
-                    DatePicker("Срок выполнения", selection: $dueDate, displayedComponents: .date)
+                    DatePicker("Deadline", selection: $dueDate, displayedComponents: .date)
                 }
             }
-            .navigationTitle("Новый заказ")
+            .navigationTitle("New order")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Отмена") {
-                        dismiss()
+                    Button("Cancel") {
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Сохранить") {
+                    Button("Save") {
                         saveJob()
                     }
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold))
                     .disabled(clientName.isEmpty || service.isEmpty)
                 }
             }
-            .alert("Ошибка валидации", isPresented: $showingValidationAlert) {
-                Button("OK") { }
-            } message: {
-                Text(validationMessage)
+            .alert(isPresented: $showingValidationAlert) {
+                Alert(
+                    title: Text("Validation error"),
+                    message: Text(validationMessage),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
     }
@@ -67,7 +69,7 @@ struct AddJobScreen: View {
         
         let newJob = Job(
             clientName: clientName,
-            carModel: carModel.isEmpty ? "Не указано" : carModel,
+            carModel: carModel.isEmpty ? "Not specified" : carModel,
             service: service,
             status: status,
             dueDate: dueDate,
@@ -75,18 +77,18 @@ struct AddJobScreen: View {
         )
         
         onSave(newJob)
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
     
     private func validateFields() -> Bool {
         if clientName.isEmpty {
-            validationMessage = "Имя клиента обязательно для заполнения"
+            validationMessage = "Client name is required"
             showingValidationAlert = true
             return false
         }
         
         if service.isEmpty {
-            validationMessage = "Услуга обязательна для заполнения"
+            validationMessage = "This service is required to be filled in."
             showingValidationAlert = true
             return false
         }

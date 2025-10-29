@@ -10,7 +10,7 @@ struct SettingsScreen: View {
     @State private var tempPhone = ""
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List {
                 profileSection
                 
@@ -25,18 +25,22 @@ struct SettingsScreen: View {
             .sheet(isPresented: $showingEditProfile) {
                 editProfileSheet
             }
-            .alert("Export completed", isPresented: $viewModel.showingExportAlert) {
-                Button("OK") { }
-            } message: {
-                Text("Data successfully exported to CSV file")
+            .alert(isPresented: $viewModel.showingExportAlert) {
+                Alert(
+                    title: Text("Export completed"),
+                    message: Text("Data successfully exported to CSV file"),
+                    dismissButton: .default(Text("OK"))
+                )
             }
-            .alert("Clear database", isPresented: $viewModel.showingClearDatabaseAlert) {
-                Button("Cancel", role: .cancel) { }
-                Button("Clear", role: .destructive) {
-                    viewModel.clearAllAppData()
-                }
-            } message: {
-                Text("This action will delete all app data including clients, jobs, and parts. This action cannot be undone.")
+            .alert(isPresented: $viewModel.showingClearDatabaseAlert) {
+                Alert(
+                    title: Text("Clear database"),
+                    message: Text("This action will delete all app data including clients, jobs, and parts. This action cannot be undone."),
+                    primaryButton: .cancel(Text("Cancel")),
+                    secondaryButton: .destructive(Text("Clear")) {
+                        viewModel.clearAllAppData()
+                    }
+                )
             }
         }
     }
@@ -61,8 +65,7 @@ struct SettingsScreen: View {
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(viewModel.userProfile.name.isEmpty ? "No name set" : viewModel.userProfile.name)
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                        .font(.system(size: 22, weight: .semibold))
                         .foregroundColor(viewModel.userProfile.name.isEmpty ? .secondary : .primary)
                     
                     Text(viewModel.userProfile.email.isEmpty ? "No email set" : viewModel.userProfile.email)
@@ -160,9 +163,9 @@ struct SettingsScreen: View {
     }
     
     private var editProfileSheet: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Section("Personal Information") {
+                Section(header: Text("Personal Information")) {
                     TextField("Name", text: $tempName)
                     TextField("Email", text: $tempEmail)
                         .keyboardType(.emailAddress)
@@ -189,7 +192,7 @@ struct SettingsScreen: View {
                         )
                         showingEditProfile = false
                     }
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold))
                 }
             }
         }

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AddPartScreen: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     @State private var name = ""
     @State private var quantity = 1
     @State private var price = ""
@@ -12,9 +12,9 @@ struct AddPartScreen: View {
     let onSave: (Part) -> Void
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Section("Part Information") {
+                Section(header: Text("Part Information")) {
                     TextField("Part Name", text: $name)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     
@@ -22,13 +22,13 @@ struct AddPartScreen: View {
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
                 
-                Section("Quantity and Price") {
+                Section(header: Text("Quantity and Price")) {
                     HStack {
                         Text("Quantity")
                         Spacer()
                         Stepper(value: $quantity, in: 1...1000) {
                             Text("\(quantity)")
-                                .fontWeight(.semibold)
+                                .font(.system(size: 17, weight: .semibold))
                         }
                     }
                     
@@ -42,7 +42,7 @@ struct AddPartScreen: View {
                                 .foregroundColor(.secondary)
                             Spacer()
                             Text("\(totalCost, specifier: "%.2f")")
-                                .fontWeight(.semibold)
+                                .font(.system(size: 17, weight: .semibold))
                                 .foregroundColor(.primary)
                         }
                     }
@@ -70,14 +70,16 @@ struct AddPartScreen: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
-            .alert("Validation Error", isPresented: $showingValidationAlert) {
-                Button("OK") { }
-            } message: {
-                Text(validationMessage)
+            .alert(isPresented: $showingValidationAlert) {
+                Alert(
+                    title: Text("Validation Error"),
+                    message: Text(validationMessage),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
     }
@@ -106,7 +108,7 @@ struct AddPartScreen: View {
         )
         
         onSave(newPart)
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
     
     private func validateFields() -> Bool {

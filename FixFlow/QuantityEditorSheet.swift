@@ -4,7 +4,7 @@ import SwiftUI
 struct QuantityEditorSheet: View {
     let part: Part
     @ObservedObject var viewModel: PartsViewModel
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     
     @State private var newQuantity: Int
     
@@ -15,7 +15,7 @@ struct QuantityEditorSheet: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack(spacing: 24) {
                 VStack(spacing: 12) {
                     Image(systemName: part.category.icon)
@@ -23,11 +23,10 @@ struct QuantityEditorSheet: View {
                         .foregroundColor(.blue)
                     
                     Text(part.name)
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                        .font(.system(size: 22, weight: .semibold))
                         .multilineTextAlignment(.center)
                     
-                    Text("Артикул: \(part.partNumber)")
+                    Text("Part Number: \(part.partNumber)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -37,17 +36,16 @@ struct QuantityEditorSheet: View {
                 .padding(.horizontal)
                 
                 VStack(spacing: 16) {
-                    Text("Текущее количество")
+                    Text("Current Quantity")
                         .font(.headline)
                     
-                    Text("\(part.quantity) шт.")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
+                    Text("\(part.quantity) pcs.")
+                        .font(.system(size: 34, weight: .bold))
                         .foregroundColor(.blue)
                 }
                 
                 VStack(spacing: 16) {
-                    Text("Новое количество")
+                    Text("New Quantity")
                         .font(.headline)
                     
                     HStack(spacing: 20) {
@@ -58,8 +56,7 @@ struct QuantityEditorSheet: View {
                         }
                         
                         Text("\(newQuantity)")
-                            .font(.title)
-                            .fontWeight(.bold)
+                            .font(.system(size: 28, weight: .bold))
                             .frame(minWidth: 60)
                         
                         Button(action: { newQuantity += 1 }) {
@@ -80,17 +77,17 @@ struct QuantityEditorSheet: View {
                 
                 Spacer()
             }
-            .navigationTitle("Изменить количество")
+            .navigationTitle("Change Quantity")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Отмена") {
-                        dismiss()
+                    Button("Cancel") {
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Сохранить") {
+                    Button("Save") {
                         saveQuantity()
                     }
                     .disabled(newQuantity == part.quantity)
@@ -101,7 +98,7 @@ struct QuantityEditorSheet: View {
     
     private func saveQuantity() {
         viewModel.updateQuantity(for: part, newQuantity: newQuantity)
-        dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
 }
 

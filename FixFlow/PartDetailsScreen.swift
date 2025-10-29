@@ -4,19 +4,21 @@ import SwiftUI
 struct PartDetailsScreen: View {
     @State var part: Part
     @ObservedObject var viewModel: PartsViewModel
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentationMode) var presentationMode
     
     @State private var isEditing = false
     @State private var editedPart: Part
+    @State private var priceText: String = ""
     
     init(part: Part, viewModel: PartsViewModel) {
         self.part = part
         self.viewModel = viewModel
         self._editedPart = State(initialValue: part)
+        self._priceText = State(initialValue: "")
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
                     mainInfoCard
@@ -33,20 +35,24 @@ struct PartDetailsScreen: View {
                 }
                 .padding()
             }
-            .navigationTitle("Детали детали")
+            .navigationTitle("Part Details")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Закрыть") {
-                        dismiss()
+                    Button("Close") {
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(isEditing ? "Сохранить" : "Изменить") {
+                    Button(isEditing ? "Save" : "Edit") {
                         if isEditing {
+                            if let priceValue = Double(priceText) {
+                                editedPart.price = priceValue
+                            }
                             saveChanges()
                         } else {
+                            priceText = String(format: "%.2f", editedPart.price)
                             isEditing = true
                         }
                     }
@@ -63,17 +69,16 @@ struct PartDetailsScreen: View {
                     .font(.title2)
                 
                 VStack(alignment: .leading) {
-                    Text("Деталь")
+                    Text("Part")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
                     if isEditing {
-                        TextField("Название детали", text: $editedPart.name)
+                        TextField("Part Name", text: $editedPart.name)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                     } else {
                         Text(part.name)
-                            .font(.headline)
-                            .fontWeight(.semibold)
+                            .font(.system(size: 17, weight: .semibold))
                     }
                 }
                 
@@ -88,18 +93,17 @@ struct PartDetailsScreen: View {
                     .font(.title2)
                 
                 VStack(alignment: .leading) {
-                    Text("Артикул")
+                    Text("Part Number")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
                     if isEditing {
-                        TextField("Артикул", text: $editedPart.partNumber)
+                        TextField("Part Number", text: $editedPart.partNumber)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .autocapitalization(.allCharacters)
                     } else {
                         Text(part.partNumber)
-                            .font(.headline)
-                            .fontWeight(.semibold)
+                            .font(.system(size: 17, weight: .semibold))
                     }
                 }
                 
@@ -119,16 +123,16 @@ struct PartDetailsScreen: View {
                     .foregroundColor(.orange)
                     .font(.title2)
                 
-                Text("Количество и цена")
+                Text("Quantity and Price")
                     .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold))
                 
                 Spacer()
             }
             
             VStack(spacing: 16) {
                 HStack {
-                    Text("Количество на складе")
+                    Text("Stock Quantity")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -137,14 +141,14 @@ struct PartDetailsScreen: View {
                     if isEditing {
                         Stepper("\(editedPart.quantity)", value: $editedPart.quantity, in: 0...1000)
                     } else {
-                        Text("\(part.quantity) шт.")
+                        Text("\(part.quantity) pcs.")
                             .font(.subheadline)
-                            .fontWeight(.medium)
+                            .font(.system(size: 17, weight: .medium))
                     }
                 }
                 
                 HStack {
-                    Text("Минимальное количество")
+                    Text("Minimum Quantity")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -153,28 +157,38 @@ struct PartDetailsScreen: View {
                     if isEditing {
                         Stepper("\(editedPart.minimumQuantity)", value: $editedPart.minimumQuantity, in: 1...100)
                     } else {
-                        Text("\(part.minimumQuantity) шт.")
+                        Text("\(part.minimumQuantity) pcs.")
                             .font(.subheadline)
-                            .fontWeight(.medium)
+                            .font(.system(size: 17, weight: .medium))
                     }
                 }
                 
                 HStack {
-                    Text("Цена за единицу")
+                    Text("Price per Unit")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
                     Spacer()
                     
                     if isEditing {
-                        TextField("Price", value: $editedPart.price, format: .number)
+                        TextField("Price", text: $priceText)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
+                            .onChange(of: priceText) { newValue in
+                                let filtered = newValue.filter { $0.isNumber || $0 == "." }
+                                if filtered != newValue {
+                                    priceText = filtered
+                                } else {
+                                    if let priceValue = Double(filtered) {
+                                        editedPart.price = priceValue
+                                    }
+                                }
+                            }
                     } else {
                         Text("\(Int(part.price))")
                             .font(.subheadline)
-                            .fontWeight(.medium)
+                            .font(.system(size: 17, weight: .medium))
                     }
                 }
             }
@@ -192,9 +206,9 @@ struct PartDetailsScreen: View {
                     .foregroundColor(.purple)
                     .font(.title2)
                 
-                Text("Поставщик и категория")
+                Text("Supplier and Category")
                     .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold))
                 
                 Spacer()
             }
@@ -205,20 +219,20 @@ struct PartDetailsScreen: View {
                         .foregroundColor(.blue)
                         .font(.caption)
                     
-                    Text("Поставщик")
+                    Text("Supplier")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
                     Spacer()
                     
                     if isEditing {
-                        TextField("Поставщик", text: $editedPart.supplier)
+                        TextField("Supplier", text: $editedPart.supplier)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .multilineTextAlignment(.trailing)
                     } else {
                         Text(part.supplier)
                             .font(.subheadline)
-                            .fontWeight(.medium)
+                            .font(.system(size: 17, weight: .medium))
                     }
                 }
                 
@@ -227,14 +241,14 @@ struct PartDetailsScreen: View {
                         .foregroundColor(.blue)
                         .font(.caption)
                     
-                    Text("Категория")
+                    Text("Category")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
                     Spacer()
                     
                     if isEditing {
-                        Picker("Категория", selection: $editedPart.category) {
+                        Picker("Category", selection: $editedPart.category) {
                             ForEach(PartCategory.allCases, id: \.self) { category in
                                 Text(category.rawValue).tag(category)
                             }
@@ -243,7 +257,7 @@ struct PartDetailsScreen: View {
                     } else {
                         Text(part.category.rawValue)
                             .font(.subheadline)
-                            .fontWeight(.medium)
+                            .font(.system(size: 17, weight: .medium))
                     }
                 }
             }
@@ -261,20 +275,19 @@ struct PartDetailsScreen: View {
                     .foregroundColor(.blue)
                     .font(.title2)
                 
-                Text("Описание")
+                Text("Description")
                     .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold))
                 
                 Spacer()
             }
             
             if isEditing {
-                TextField("Описание", text: Binding(
+                TextEditor(text: Binding(
                     get: { editedPart.description ?? "" },
                     set: { editedPart.description = $0.isEmpty ? nil : $0 }
-                ), axis: .vertical)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .lineLimit(3...6)
+                ))
+                .frame(minHeight: 80, maxHeight: 120)
             } else {
                 Text(part.description ?? "")
                     .font(.body)
@@ -294,16 +307,16 @@ struct PartDetailsScreen: View {
                     .foregroundColor(.green)
                     .font(.title2)
                 
-                Text("Статистика")
+                Text("Statistics")
                     .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 17, weight: .semibold))
                 
                 Spacer()
             }
             
             VStack(spacing: 12) {
                 HStack {
-                    Text("Общая стоимость:")
+                    Text("Total Value:")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -311,11 +324,11 @@ struct PartDetailsScreen: View {
                     
                     Text("\(Int(part.totalValue))")
                         .font(.subheadline)
-                        .fontWeight(.semibold)
+                        .font(.system(size: 17, weight: .semibold))
                 }
                 
                 HStack {
-                    Text("Статус:")
+                    Text("Status:")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -325,7 +338,7 @@ struct PartDetailsScreen: View {
                 }
                 
                 HStack {
-                    Text("Создана:")
+                    Text("Created:")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -337,7 +350,7 @@ struct PartDetailsScreen: View {
                 }
                 
                 HStack {
-                    Text("Обновлена:")
+                    Text("Updated:")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     

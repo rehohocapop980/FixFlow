@@ -8,7 +8,7 @@ struct JobsScreen: View {
     @State private var isScrollingUp = false
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ZStack {
                 FixFlowTheme.Colors.purpleBackground
                     .ignoresSafeArea()
@@ -109,34 +109,35 @@ struct JobsScreen: View {
                                 selectedJob = job
                             }
                         }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button(role: .destructive) {
+                        .contextMenu {
+                            Button(action: {
                                 withAnimation(FixFlowTheme.Animation.spring) {
-                                    viewModel.deleteJob(job)
+                                    selectedJob = job
                                 }
-                            } label: {
-                                Label("Delete", systemImage: "trash")
+                            }) {
+                                Label("Edit", systemImage: "pencil")
                             }
                             
-                            Button {
+                            Button(action: {
                                 let nextStatus = getNextStatus(for: job.status)
                                 withAnimation(FixFlowTheme.Animation.spring) {
                                     viewModel.changeJobStatus(job, to: nextStatus)
                                 }
-                            } label: {
+                            }) {
                                 Label("Complete", systemImage: "checkmark")
                             }
-                            .tint(FixFlowTheme.Colors.success)
-                        }
-                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                            Button {
+                            
+                            Button(action: {
                                 withAnimation(FixFlowTheme.Animation.spring) {
-                                    selectedJob = job
+                                    viewModel.deleteJob(job)
                                 }
-                            } label: {
-                                Label("Edit", systemImage: "pencil")
+                            }) {
+                                HStack {
+                                    Image(systemName: "trash")
+                                    Text("Delete")
+                                }
+                                .foregroundColor(.red)
                             }
-                            .tint(FixFlowTheme.Colors.accent)
                         }
                         .fixFlowCardTransition()
                 }
@@ -144,7 +145,7 @@ struct JobsScreen: View {
             .padding(.horizontal, FixFlowTheme.Spacing.lg)
             .padding(.bottom, 100)
         }
-        .scrollContentBackground(.hidden)
+        .background(Color.clear)
         .overlay(
             VStack {
                 Spacer()
@@ -220,8 +221,7 @@ struct JobCardView: View {
                     .font(.system(size: 14, weight: .medium))
                 
                 Text(job.service)
-                    .font(FixFlowTheme.Typography.callout)
-                    .fontWeight(.medium)
+                    .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.primary)
             }
             
@@ -281,8 +281,7 @@ struct StatusBadge: View {
                 .font(.system(size: 10, weight: .semibold))
             
             Text(status.rawValue)
-                .font(FixFlowTheme.Typography.caption)
-                .fontWeight(.semibold)
+                .font(.system(size: 12, weight: .semibold))
         }
         .foregroundColor(.white)
         .padding(.horizontal, FixFlowTheme.Spacing.sm)
